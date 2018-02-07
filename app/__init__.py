@@ -1,5 +1,5 @@
 from flask import Flask
-from views.status import status
+from .views.status import status
 
 
 def init_app():
