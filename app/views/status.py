@@ -2,7 +2,7 @@ from flask import Blueprint, render_template
 import requests
 
 params = {
-    "hide_thread": "true,"
+    "hide_thread": "true",
     "dnt": "true"
 }
 
