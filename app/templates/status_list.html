@@ -2,8 +2,11 @@
 {% block content %}
 <h3>Tweets</h3>
 <ul>
-{% for id in ids %}
-    <li>{{ id }}</li>
+{% for tweet in tweets %}
+  <li>
+    <a href="./{{ tweet.id }}">{{ tweet.url }}</a>
+    {{ tweet.html|safe }}
+</li>
 {% endfor %}
 </ul>
 {% endblock %}

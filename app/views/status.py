@@ -14,7 +14,7 @@ def oembed_tweet(tweet_id, params=params):
     params['url'] = f'https://twitter.com/user/status/{tweet_id}'
     url = 'https://publish.twitter.com/oembed'
     res = requests.get(url, params=params)
-    return res.json()['html']
+    return res.json()
 
 
 status = Blueprint('status', __name__)
@@ -25,9 +25,14 @@ def status_list():
     '''
     ツイート一覧ページ
     '''
-    ids = []
-
-    return render_template('status_list.html', title='Tweets', ids=ids)
+    tweet_ids = []
+    oembed_tweets = []
+    for tw_id in tweet_ids:
+        oembed_tweets.append(oembed_tweet(tw_id))
+    return render_template(
+        'status_list.html',
+        title='Tweets',
+        tweets=oembed_tweets)
 
 
 @status.route('/<id>')
