@@ -7,11 +7,11 @@ params = {
 }
 
 
-def oembed_tweet(id, params=params):
+def oembed_tweet(tweet_id, params=params):
     '''
     埋め込みツイートのマークアップを取得
     '''
-    params['url'] = f'https://twitter.com/user/status/{id}'
+    params['url'] = f'https://twitter.com/user/status/{tweet_id}'
     url = 'https://publish.twitter.com/oembed'
     res = requests.get(url, params=params)
     return res.json()['html']
