@@ -14,7 +14,9 @@ def oembed_tweet(tweet_id, params=params):
     params['url'] = f'https://twitter.com/user/status/{tweet_id}'
     url = 'https://publish.twitter.com/oembed'
     res = requests.get(url, params=params)
-    return res.json()
+    ret = res.json()
+    ret['id'] = tweet_id
+    return ret
 
 
 status = Blueprint('status', __name__)
