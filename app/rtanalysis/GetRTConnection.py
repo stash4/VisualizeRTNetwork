@@ -1,7 +1,9 @@
 import RTData
+import tweepy
+import TwitterKey
 
 
-def get_rt_ids(api, sid):
+def get_rt_data(api, sid):
     group_id = 0
     retweeter = api.retweets(sid, 100)  # RTしたユーザを取得(100件)
     retweeter_data = []  # RTData格納用
@@ -13,4 +15,23 @@ def get_rt_ids(api, sid):
 
     return retweeter_data
 
+
+def set_api():
+    # TwitterAPIの認証
+    auth = tweepy.OAuthHandler(TwitterKey.CONSUMER_KEY, TwitterKey.CONSUMER_SECRET_KEY)
+    auth.set_access_token(TwitterKey.ACCESS_TOKEN, TwitterKey.ACCESS_TOKEN_SECRET)
+    api = tweepy.API(auth, wait_on_rate_limit=True)  # 2つ目の引数はAPI制限に引っかかった時に待つかどうかを選ぶオプション
+    return api
+
+
+def get_root_user(api, url):
+    status_id = url.split("/")[5]  # ツイートID
+
+    tweeter_screen_name = url.split("/")[3]  # スクリーンネーム
+    tweeter_data = api.get_user(tweeter_screen_name)  # スクリーンネームからツイート主の情報を取得
+    tweeter_id = tweeter_data.id  # その中からuserIDを抜き出す
+    tweeter_name = tweeter_data.name  # ユーザ名も抜き出す
+    root_user = RTData.RTData(tweeter_id, status_id, tweeter_name, 0)  # RTData型で管理する
+    print(root_user.user_name)
+    return root_user
 
