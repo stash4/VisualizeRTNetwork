@@ -8,15 +8,15 @@
 </style>
 <div class="mdc-layout-grid">
   <div class="mdc-layout-grid__inner">
-{% for tweet in tweets %}
-<div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6 mdc-layout-grid__cell--span-12-tablet">
-  {{ tweet.html|safe }}
-  <a class="mdc-typography--subheading2" href="./{{ tweet.id }}">
-    <i class="material-icons md-24 icons">insert_chart</i>
-    Show graph
-  </a>
-</div>
-{% endfor %}
-</div>
+  {% for tweet in tweets %}
+    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6 mdc-layout-grid__cell--span-12-tablet">
+      {{ tweet.html|safe }}
+      <a class="mdc-typography--subheading2" href="./{{ tweet.id }}">
+        <i class="material-icons md-24 icons">insert_chart</i>
+        Show graph
+      </a>
+    </div>
+  {% endfor %}
+  </div>
 </div>
 {% endblock %}
