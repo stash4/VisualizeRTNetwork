@@ -3,9 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <title>{{ title }}</title>
+  <link rel="stylesheet"
+        href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css">
 </head>
 <body>
   {% block content %}
   {% endblock %}
+  <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+  <script>window.mdc.autoInit();</script>
 </body>
 </html>
