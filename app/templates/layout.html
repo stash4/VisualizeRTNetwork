@@ -7,8 +7,13 @@
         href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css">
 </head>
 <body>
-  {% block content %}
-  {% endblock %}
+  {% include "header.html" %}
+  <main>
+    <div class="mdc-toolbar-fixed-adjust">
+    {% block content %}
+    {% endblock %}
+    </div>
+  </main>
   <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
   <script>window.mdc.autoInit();</script>
 </body>
