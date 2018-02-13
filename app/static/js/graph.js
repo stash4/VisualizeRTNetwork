@@ -20,15 +20,24 @@ var simulation = d3.forceSimulation()
 
     var node = svg.append("g")
         .attr("class", "nodes")
-        .selectAll("circle")
+        .selectAll("g")
         .data(data.nodes)
-        .enter().append("circle")
+        .enter().append("g")
+
+    var circles = node.append("circle")
         .attr("r", 5)
         .attr("fill", function (d) { return color(d.group); })
         .call(d3.drag()
             .on("start", dragstarted)
             .on("drag", dragged)
             .on("end", dragended));
+
+    var lables = node.append("text")
+        .text(function (d) {
+            return d.id;
+        })
+        .attr('x', 6)
+        .attr('y', 3);
 
     node.append("title")
         .text(function (d) { return d.id; });
@@ -48,8 +57,9 @@ var simulation = d3.forceSimulation()
             .attr("y2", function (d) { return d.target.y; });
 
         node
-            .attr("cx", function (d) { return d.x; })
-            .attr("cy", function (d) { return d.y; });
+            .attr("transform", function (d) {
+                return "translate(" + d.x + "," + d.y + ")";
+            })
     }
 }(data));
 
