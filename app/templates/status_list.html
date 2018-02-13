@@ -1,12 +1,19 @@
 {% extends "layout.html" %}
 {% block content %}
 <h3>Tweets</h3>
-<ul>
+<style>
+  .material-icons.icons {
+    vertical-align: top;
+  }
+</style>
+<div class="mdc-layout-grid">
+  <div class="mdc-layout-grid__inner">
 {% for tweet in tweets %}
-  <li>
-    <a href="./{{ tweet.id }}">{{ tweet.url }}</a>
+<div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-6 mdc-layout-grid__cell--span-8-tablet">
+    <a class="mdc-typography--subheading2" href="./{{ tweet.id }}"><i class="material-icons md-24 icons">insert_chart</i>Show graph</a>
     {{ tweet.html|safe }}
-</li>
+</div>
 {% endfor %}
-</ul>
+</div>
+</div>
 {% endblock %}
