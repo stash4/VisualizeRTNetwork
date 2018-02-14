@@ -4,13 +4,11 @@ import TwitterKey
 
 
 def get_rt_data(api, sid):
-    group_id = 0
     retweeter = api.retweets(sid, 100)  # RTしたユーザを取得(100件)
     retweeter_data = []  # RTData格納用
 
     for rter in retweeter:
-        retweeter_data.append(RTData.RTData(rter.user.id, sid, rter.user.name, 1, group_id))  # 情報を抽出してRTData型として管理
-        group_id += 1
+        retweeter_data.append(RTData.RTData(rter.user.id, sid, rter.user.name))  # 情報を抽出してRTData型として管理
         # user_idを基に他の情報を調べる手法だと応答にかなり時間がかかるため、つながりデータは後回しにしてRTDataを生成した。
 
     return retweeter_data
@@ -31,7 +29,6 @@ def get_root_user(api, url):
     tweeter_data = api.get_user(tweeter_screen_name)  # スクリーンネームからツイート主の情報を取得
     tweeter_id = tweeter_data.id  # その中からuserIDを抜き出す
     tweeter_name = tweeter_data.name  # ユーザ名も抜き出す
-    root_user = RTData.RTData(tweeter_id, status_id, tweeter_name, 0)  # RTData型で管理する
-    print(root_user.user_name)
+    root_user = RTData.RTData(tweeter_id, status_id, tweeter_name, 0, -1)  # RTData型で管理する
     return root_user
 
