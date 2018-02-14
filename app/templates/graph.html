@@ -13,19 +13,6 @@
 <svg width="960" height="600"></svg>
 <link rel="stylesheet" href="../static/css/graph.css">
 <script>
-  var texts = document.getElementsByTagName('text');
-  var name_switch = document.getElementById('name-switch');
-  name_switch.onchange = function () {
-    if (!name_switch.checked) {
-      for (var i = 0; i < texts.length; i++) {
-        texts.item(i).style.display = 'none';
-      }
-    } else {
-      for (var i = 0; i < texts.length; i++) {
-        texts.item(i).style.display = 'block';
-      }
-    }
-  }
   var data = {{ data|safe }}
 </script>
 <script src="https://d3js.org/d3.v4.min.js"></script>
