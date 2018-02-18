@@ -42,5 +42,6 @@ def graph(id):
     '''
     グラフ表示ページ
     '''
+    tweet = oembed_tweet(id)
     data = {}
-    return render_template('graph.html', title='Graph', data=data)
+    return render_template('graph.html', title='Graph', tweet=tweet, data=data)
