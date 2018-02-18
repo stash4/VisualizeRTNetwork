@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, request
 import requests
 
 params = {
@@ -35,6 +35,18 @@ def status_list():
         'status_list.html',
         title='Tweets',
         tweets=oembed_tweets)
+
+
+@status.route('/new', methods=['POST', 'GET'])
+def add_tweet():
+    '''
+    新規ツイート登録ページ
+    '''
+    notify = 'false'
+    if request.method == 'POST':
+        request.form['tweet-id']
+        notify = 'true'
+    return render_template('new.html', title='Add New Tweet', notify=notify)
 
 
 @status.route('/<id>')
