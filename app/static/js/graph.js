@@ -5,7 +5,7 @@ var svg = d3.select("svg"),
 var color = d3.scaleOrdinal(d3.schemeCategory20);
 
 var simulation = d3.forceSimulation()
-  .force("link", d3.forceLink().id(function (d) { return d.id; }))
+  .force("link", d3.forceLink().id(function (d) { return d.userid; }))
   .force("charge", d3.forceManyBody())
   .force("center", d3.forceCenter(width / 2, height / 2));
 
@@ -16,15 +16,15 @@ var simulation = d3.forceSimulation()
     .selectAll("line")
     .data(data.links)
     .enter().append("line")
-    .attr("stroke-width", function (d) { return Math.sqrt(d.value); });
+    .attr("stroke-width", function (d) { return Math.sqrt(d.distance); });
 
-  var node = svg.append("g")
-    .attr("class", "nodes")
+  var user = svg.append("g")
+    .attr("class", "users")
     .selectAll("g")
-    .data(data.nodes)
+    .data(data.users)
     .enter().append("g")
 
-  var circles = node.append("circle")
+  var circles = user.append("circle")
     .attr("r", 5)
     .attr("fill", function (d) { return color(d.group); })
     .call(d3.drag()
@@ -32,18 +32,18 @@ var simulation = d3.forceSimulation()
       .on("drag", dragged)
       .on("end", dragended));
 
-  var lables = node.append("text")
+  var labels = user.append("text")
     .text(function (d) {
-      return d.id;
+      return d.name;
     })
     .attr('x', 6)
     .attr('y', 3);
 
-  node.append("title")
-    .text(function (d) { return d.id; });
+  user.append("title")
+    .text(function (d) { return d.userid; });
 
   simulation
-    .nodes(data.nodes)
+    .nodes(data.users)
     .on("tick", ticked);
 
   simulation.force("link")
@@ -56,7 +56,7 @@ var simulation = d3.forceSimulation()
       .attr("x2", function (d) { return d.target.x; })
       .attr("y2", function (d) { return d.target.y; });
 
-    node
+    user
       .attr("transform", function (d) {
         return "translate(" + d.x + "," + d.y + ")";
       })
