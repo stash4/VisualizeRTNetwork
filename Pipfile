@@ -7,8 +7,9 @@ name = "pypi"
 
 [packages]
 
-Flask = "*"
+flask = "*"
 requests = "*"
+flask-sqlalchemy = "*"
 
 
 [dev-packages]
