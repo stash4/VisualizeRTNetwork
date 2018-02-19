@@ -79,3 +79,18 @@ function dragended(d) {
   d.fx = null;
   d.fy = null;
 }
+
+// Display name
+var texts = document.getElementsByTagName('text');
+var name_switch = document.getElementById('name-switch');
+name_switch.onchange = function () {
+  if (!name_switch.checked) {
+    for (var i = 0; i < texts.length; i++) {
+      texts.item(i).style.display = 'none';
+    }
+  } else {
+    for (var i = 0; i < texts.length; i++) {
+      texts.item(i).style.display = 'block';
+    }
+  }
+}

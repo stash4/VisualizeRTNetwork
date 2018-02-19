@@ -1,6 +1,15 @@
 {% extends "layout.html" %}
 {% block content %}
-<h3>Tweets</h3>
+{{ tweet }}
+<div class="switch-wrapper">
+  <div class="mdc-switch">
+    <input type="checkbox" id="name-switch" class="mdc-switch__native-control">
+    <div class="mdc-switch__background">
+      <div class="mdc-switch__knob"></div>
+    </div>
+  </div>
+  <label for="basic-switch" class="mdc-switch-label">Display name</label>
+</div>
 <svg width="960" height="600"></svg>
 <link rel="stylesheet" href="../static/css/graph.css">
 <script>
