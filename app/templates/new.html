@@ -21,18 +21,19 @@
     <button type="button" class="mdc-snackbar__action-button"></button>
   </div>
 </div>
+{% for msg in get_flashed_messages() %}
 <script>
   const MDCSnackbar = mdc.snackbar.MDCSnackbar;
   const snackbar = new MDCSnackbar(document.querySelector('.mdc-snackbar'));
   const dataObj = {
-    message: 'Tweet is added.',
+    message: '{{ msg }}'
     /*actionText: 'OK',
     actionHandler: function () {
       console.log('my cool function');
       snackbar.hide();
     }*/
   };
-  if({{ notify }}) {
-    snackbar.show(dataObj);
-  }
-</script> {% endblock %}
+  snackbar.show(dataObj);
+</script>
+{% endfor %}
+{% endblock %}

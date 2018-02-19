@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, flash
 import requests
 
 params = {
@@ -42,11 +42,10 @@ def add_tweet():
     '''
     新規ツイート登録ページ
     '''
-    notify = 'false'
     if request.method == 'POST':
-        request.form['tweet-id']
-        notify = 'true'
-    return render_template('new.html', title='Add New Tweet', notify=notify)
+        tweet_id = request.form['tweet-id']
+        flash(f'Tweet(id: {tweet_id}) is Added.')
+    return render_template('new.html', title='Add New Tweet')
 
 
 @status.route('/<id>')
