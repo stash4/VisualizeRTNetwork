@@ -17,6 +17,7 @@ flask-sqlalchemy = "*"
 "autopep8" = "*"
 "flake8" = "*"
 mypy = "*"
+python-dotenv = "*"
 
 
 [requires]
