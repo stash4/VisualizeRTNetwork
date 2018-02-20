@@ -27,11 +27,16 @@ def get_follower_ids(api, user_id):
     return followers_id_list[0]
 
 
-def get_retweeter_data(retweeters_data_list, followers_id_list):
-    # RTした人のデータからuserIDだけのリストを生成(ここ冗長)
+def create_user_id_list(retweeters_data_list):
     retweeters_id_list = []
     for rdata in retweeters_data_list:
         retweeters_id_list.append(int(rdata.user_id))
+    return retweeters_id_list
+
+
+def get_retweeter_data(retweeters_data_list, followers_id_list):
+    # RTした人のデータからuserIDだけのリストを生成
+    retweeters_id_list = create_user_id_list(retweeters_data_list)
 
     # フォロワーの中でRTした人を取得
     fler_set = set(followers_id_list)  # set化
@@ -47,13 +52,17 @@ def get_retweeter_data(retweeters_data_list, followers_id_list):
     return retweeters_data_list2
 
 
-def set_connection(ruser, retweeters_data_list):
-    for rdata in retweeters_data_list:
-        if rdata.distance != -1:
+def set_connection(ruser, retweeters_data_list, is_connect):
+    if is_connect:
+        for rdata in retweeters_data_list:
+            if rdata.distance != 1.5:
+                ruser.connection_list.append([rdata.user_id, rdata.distance])
+            else:
+                ruser.connection_list.append([rdata.user_id, ruser.distance + 1])
+        retweeter_tree.append(ruser)
+    else:
+        for rdata in retweeters_data_list:
             ruser.connection_list.append([rdata.user_id, rdata.distance])
-        else:
-            ruser.connection_list.append([rdata.user_id, ruser.distance + 1])
-    retweeter_tree.append(ruser)
 
 
 def set_group(ruser, retweeter_data_list):
@@ -97,7 +106,7 @@ def trace_tree(api, retweeters_data_list, root_retweeters_data_list, tree):
         print("親ノード削除前：" + str(len(retweeters_data_list2)))
         rdata.connection_list = []  # 親ノードのつながりが入ってるみたいなので一回初期化
         rdata.distance = tree-1  # 同様の理由でにdistanceに階層の値を代入
-        set_connection(rdata, retweeters_data_list2)
+        set_connection(rdata, retweeters_data_list2, True)
 
         # 親ノードをRTリストから削除
         retweeters_data_list3 = check_upper_node(retweeters_data_list2)
@@ -108,6 +117,19 @@ def trace_tree(api, retweeters_data_list, root_retweeters_data_list, tree):
 
         # 再帰呼び出し
         trace_tree(api, retweeters_data_list4, root_retweeters_data_list, tree+1)
+
+
+def add_unconnected_user(ruser, rtree, rrd_list):
+    new_tree = []
+    for rrd in rrd_list:
+        if rrd.user_id not in node_id:
+            new_tree.append(rrd)
+
+    set_connection(ruser, new_tree, False)
+
+    for nt in new_tree:
+        rtree.append(nt)
+    return rtree
 
 
 def create_dict(tree, stext):
@@ -135,4 +157,7 @@ def analyze_main(api, ruser, root_retweeters_data_list, status_text):
     # 再帰的に繋がりを探していく
     retweeters_data_list = [ruser]
     trace_tree(api, retweeters_data_list, root_retweeters_data_list, 1)
-    return create_dict(retweeter_tree, status_text)
+    new_retweeter_tree = add_unconnected_user(ruser, retweeter_tree, root_retweeters_data_list)
+    for rt in new_retweeter_tree:
+        print(rt.user_name)
+    return create_dict(new_retweeter_tree, status_text)
