@@ -29,6 +29,6 @@ def get_root_user(api, url):
     tweeter_data = api.get_user(tweeter_screen_name)  # スクリーンネームからツイート主の情報を取得
     tweeter_id = tweeter_data.id  # その中からuserIDを抜き出す
     tweeter_name = tweeter_data.name  # ユーザ名も抜き出す
+    tweeter_text = tweeter_data.status.text  # 本文を取得
     root_user = RTData.RTData(tweeter_id, status_id, tweeter_name, 0, -1)  # RTData型で管理する
-    return root_user
-
+    return root_user, tweeter_text
