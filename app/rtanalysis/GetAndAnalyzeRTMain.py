@@ -3,7 +3,7 @@ import GetRTConnection
 # import RTDataDAO
 
 
-def gaa_main(url="https://twitter.com/jr_tduniv/status/877352450398732292"):  # 初期値はイタリアントマト
+def gaa_main(url="https://twitter.com/over_lord_anime/status/965963357667827712"):  # 初期値はイタリアントマト
     # API認証
     api = GetRTConnection.set_api()
     # ツイート主の情報を取得
