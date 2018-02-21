@@ -14,8 +14,10 @@ def oembed_tweet(tweet_id, params=params):
     params['url'] = f'https://twitter.com/user/status/{tweet_id}'
     url = 'https://publish.twitter.com/oembed'
     res = requests.get(url, params=params)
-    ret = res.json()
-    ret['id'] = tweet_id
+    ret = {}
+    if res.status_code == 200:
+        ret = res.json()
+        ret['id'] = tweet_id
     return ret
 
 
@@ -30,7 +32,10 @@ def status_list():
     tweet_ids = []
     oembed_tweets = []
     for tw_id in tweet_ids:
-        oembed_tweets.append(oembed_tweet(tw_id))
+        tw = oembed_tweet(tw_id)
+        if tw:
+            oembed_tweets.append(tw)
+
     return render_template(
         'status_list.html',
         title='Tweets',
