@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
-<form method="post" action="/status/new">
+<form method="post" action="{{ url_for('status.add_tweet') }}">
   <div class="mdc-text-field" data-mdc-auto-init="MDCTextField">
     <input id="tweet-id" name="tweet-id" type="number" class="mdc-text-field__input" value="">
     <label for="tweet-id" class="mdc-text-field__label">

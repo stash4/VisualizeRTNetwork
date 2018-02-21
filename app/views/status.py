@@ -42,7 +42,7 @@ def add_tweet():
     '''
     新規ツイート登録ページ
     '''
-    if request.method == 'POST':
+    if request.method == 'POST' and request.form['tweet-id']:
         tweet_id = request.form['tweet-id']
         flash(f'Tweet(id: {tweet_id}) is Added.')
     return render_template('new.html', title='Add New Tweet')
