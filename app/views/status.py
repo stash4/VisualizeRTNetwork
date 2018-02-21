@@ -49,7 +49,10 @@ def add_tweet():
     '''
     if request.method == 'POST' and request.form['tweet-id']:
         tweet_id = request.form['tweet-id']
-        flash(f'Tweet(id: {tweet_id}) is Added.')
+        tw = oembed_tweet(tweet_id)
+        msg = f'Tweet(id: {tweet_id})'
+        msg += 'is added.' if tw else ' is unavailable.'
+        flash(msg)
     return render_template('new.html', title='Add New Tweet')
 
 
