@@ -16,10 +16,10 @@
         </header>
         <nav class="mdc-drawer__content mdc-list-group">
           <div class="mdc-list">
-            <a class="mdc-list-item" href="#" data-mdc-tabindex-handled="true" tabindex="-1">
+            <a class="mdc-list-item" href="{{ url_for('status.status_list') }}" data-mdc-tabindex-handled="true" tabindex="-1">
               <i class="material-icons mdc-list-item__graphic" aria-hidden="true">view_list</i>List
             </a>
-            <a class="mdc-list-item" href="#" data-mdc-tabindex-handled="true" tabindex="-1">
+            <a class="mdc-list-item" href="{{ url_for('status.add_tweet') }}" data-mdc-tabindex-handled="true" tabindex="-1">
               <i class="material-icons mdc-list-item__graphic" aria-hidden="true">add_box</i>Add Tweet
             </a>
           </div>
