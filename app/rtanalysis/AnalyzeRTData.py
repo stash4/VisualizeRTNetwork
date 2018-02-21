@@ -77,10 +77,14 @@ def set_group(ruser, retweeter_data_list):
 
 
 def check_upper_node(retweeters_data_list):
-    deleted_list = retweeters_data_list
+    deleted_list = []
+    for rlist in retweeters_data_list:
+        deleted_list.append(rlist)
     for rdata in retweeters_data_list:
         if rdata.user_id in node_id:
+            print("削除：" + str(rdata.user_name) + "(" + str(rdata.user_id) + ")")
             deleted_list.remove(rdata)
+            node_id.add(rdata.user_id)
     return deleted_list
 
 
@@ -97,6 +101,7 @@ def trace_tree(api, retweeters_data_list, root_retweeters_data_list, tree):
 
         # ユーザをフォロー&ツイートをRTしたユーザのリストを取得(RTData型)
         retweeters_data_list2 = get_retweeter_data(root_retweeters_data_list, followers_id_list)
+        print("対象ノード：" + str(rdata.user_name))
         if len(retweeters_data_list2) == 0:
             print("子ノード：無し")
         for rd in retweeters_data_list2:
