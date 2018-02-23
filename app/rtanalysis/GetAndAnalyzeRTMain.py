@@ -1,9 +1,11 @@
 import AnalyzeRTData
 import GetRTConnection
-# import RTDataDAO
+import RTDataDAO
+
+# https://twitter.com/TDU_webmaster/status/963293178307665920 サブ
 
 
-def gaa_main(url="https://twitter.com/over_lord_anime/status/965963357667827712"):  # 初期値はイタリアントマト
+def gaa_main(url="https://twitter.com/jr_tduniv/status/877352450398732292"):  # 初期値はイタリアントマト
     # API認証
     api = GetRTConnection.set_api()
     # ツイート主の情報を取得
@@ -22,7 +24,6 @@ def gaa_main(url="https://twitter.com/over_lord_anime/status/965963357667827712"
 
     # 取得した情報からつながりを分析してデータを返す(dict型)
     retweeter_tree_dict = AnalyzeRTData.analyze_main(api, root_user, retweeter_data_list, status_text)
-    print(type(retweeter_tree_dict))
 
     """
     dict型データの取り出し例
@@ -51,7 +52,7 @@ def gaa_main(url="https://twitter.com/over_lord_anime/status/965963357667827712"
     """
 
     # データベースに登録
-    # RTDataDAO.register(retweeter_tree_dict)
+    RTDataDAO.register(retweeter_tree_dict)
 
 
 gaa_main()

@@ -1,4 +1,4 @@
-import RTData
+from RTData import RTData
 import tweepy
 import TwitterKey
 
@@ -8,7 +8,7 @@ def get_rt_data(api, sid):
     retweeter_data = []  # RTData格納用
 
     for rter in retweeter:
-        retweeter_data.append(RTData.RTData(rter.user.id, sid, rter.user.name))  # 情報を抽出してRTData型として管理
+        retweeter_data.append(RTData(rter.user.id, sid, rter.user.name))  # 情報を抽出してRTData型として管理
         # user_idを基に他の情報を調べる手法だと応答にかなり時間がかかるため、つながりデータは後回しにしてRTDataを生成した。
 
     return retweeter_data
@@ -30,5 +30,5 @@ def get_root_user(api, url):
     tweeter_id = tweeter_data.id  # その中からuserIDを抜き出す
     tweeter_name = tweeter_data.name  # ユーザ名も抜き出す
     tweeter_text = api.get_status(status_id).text  # 本文を取得
-    root_user = RTData.RTData(tweeter_id, status_id, tweeter_name, 0, -1)  # RTData型で管理する
+    root_user = RTData(tweeter_id, status_id, tweeter_name, 0, -1)  # RTData型で管理する
     return root_user, tweeter_text
