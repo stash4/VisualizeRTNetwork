@@ -3,7 +3,7 @@ import json
 import ast
 import collections
 import datetime
-# import RTDataDAO
+import RTDataDAO
 
 retweeter_tree = []
 node_id = set()
@@ -11,10 +11,10 @@ stop_tree = False
 
 
 def check_api_limit(api):
-    print("API残り呼び出し回数：" + str(api.rate_limit_status("followers")["resources"]["followers"]["/followers/ids"]["remaining"]) + "回")
+    print("API残り呼び出し回数：あと：" + str(api.rate_limit_status("followers")["resources"]["followers"]["/followers/ids"]["remaining"]) + "回")
     if api.rate_limit_status("followers")["resources"]["followers"]["/followers/ids"]["remaining"] == 0:
         print("API制限に引っかかりました(◞‸◟)")
-        print("次の開始時間" + str(datetime.datetime.fromtimestamp(api.rate_limit_status("followers")["resources"]["followers"]["/followers/ids"]["reset"])))
+        print("解除時刻" + str(datetime.datetime.fromtimestamp(api.rate_limit_status("followers")["resources"]["followers"]["/followers/ids"]["reset"])))
 
 
 def get_follower_ids(api, user_id, stext, sid):
@@ -26,17 +26,19 @@ def get_follower_ids(api, user_id, stext, sid):
         if retweeter_follower <= 0:
             break
         call_api_count += 1
-    check_api_limit(api)  # API制限の回数や制限に引っかかった時の再開時間を教えてくれる
 
-    if api.rate_limit_status("followers")["resources"]["followers"]["/followers/ids"]["remaining"] - call_api_count <= 0:
+    if api.rate_limit_status("followers")["resources"]["followers"]["/followers/ids"]["remaining"] - call_api_count < 0:
+        # 現時点での分析結果を登録しておく
         retweeter_tree_dict = create_dict(retweeter_tree, stext, sid)
-        # RTDataDAO.register(retweeter_tree_dict)
-        print("API制限にかかるため15分待機します。中断しますか？ \"はい\"->y \"いいえ\"->それ以外のキー")
+        RTDataDAO.register(retweeter_tree_dict)
+
+        print("API制限にかかるため約15分待機します。中断しますか？ \"はい\"->y \"いいえ\"->それ以外のキー")
         key = input(">>")
         if key == "y":
             stop_tree = True
             return []
 
+    check_api_limit(api)  # API制限の回数や制限に引っかかった時の再開時間を教えてくれる
     followers_ids = tweepy.Cursor(api.followers_ids, user_id=user_id).pages()  # フォロワーのidを取得。一度に5000人まで取得できるらしい。15分15回
     followers_id_list = []
 
@@ -178,14 +180,16 @@ def create_dict(tree, stext, sid):
 
     # dict型に変換してreturn
     dic = collections.OrderedDict(ast.literal_eval(data_str))
+
+    # 途中で出力する場合は一部の情報を削除
     users_set = set()
     for item in dic["users"]:
         users_set.add(item["userid"])
     for item in dic["links"]:
         if not item["target"] in users_set:
-            del item["distance"]
-            del item["source"]
-            del item["target"]
+            item["distance"] = -2
+            item["source"] = 0
+            item["target"] = 0
 
     print(json.dumps(dic, ensure_ascii=False, indent=4, sort_keys=True, separators=(',', ': ')))  # 整形したものを表示
     return dic
