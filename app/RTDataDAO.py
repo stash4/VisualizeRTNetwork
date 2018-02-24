@@ -53,3 +53,18 @@ class Connection(db.Model):
 def register(retweeter_tree):
     db.session.add()
     db.session.commit()
+
+   ##read
+    db.execute("select * from tweet_info")
+    tweet = db.fetchall()
+    print(tweet)
+    # => [('1', 'test1'), (2, 'test2'), (3, 'test3'), (4, 'test4')]
+    db.execute("select * from user_info")
+    user = db.fetchall()
+    print(user)
+
+    db.execute("select * from connection_tweets")
+    connection = db.fetchall()
+    print(connection)
+
+    db.close()
