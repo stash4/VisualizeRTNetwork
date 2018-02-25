@@ -3,7 +3,7 @@ import json
 import ast
 import collections
 import datetime
-import RTDataDAO
+from . import RTDataDAO
 
 retweeter_tree = []
 node_id = set()

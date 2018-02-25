@@ -1,6 +1,4 @@
-import AnalyzeRTData
-import GetRTConnection
-import RTDataDAO
+from . import AnalyzeRTData, GetRTConnection, RTDataDAO
 
 # https://twitter.com/TDU_webmaster/status/963293178307665920 サブ
 
@@ -55,4 +53,5 @@ def gaa_main(url="https://twitter.com/jr_tduniv/status/877352450398732292"):  # 
     RTDataDAO.register(retweeter_tree_dict)
 
 
-gaa_main()
+if __name__ == '__main__':
+    gaa_main()

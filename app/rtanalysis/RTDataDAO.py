@@ -1,4 +1,4 @@
-from models import db, Tweet, User, Link
+from ..models import db, Tweet, User, Link
 
 
 def register_tweet(tweet_id, text):
@@ -33,7 +33,7 @@ def register(rt_tree_dict):
 
     users = []
     for item in rt_tree_dict['users']:
-        user = init_user(tw_id, item['userid'], item['name'], item['group'])
+        user = init_user(item['userid'], tw_id, item['name'], item['group'])
         users.append(user)
 
     links = []

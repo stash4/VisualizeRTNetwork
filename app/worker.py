@@ -1,9 +1,9 @@
 import os
 from apscheduler.schedulers.background import BlockingScheduler
 from apscheduler.triggers.interval import IntervalTrigger
-from models import Tweet
-from rtanalysis.RTDataDAO import db
-from rtanalysis.GetAndAnalyzeRTMain import gaa_main
+from .models import Tweet
+from .rtanalysis.RTDataDAO import db
+from .rtanalysis.GetAndAnalyzeRTMain import gaa_main
 
 
 def db_job():
@@ -14,7 +14,7 @@ def db_job():
 
 
 scheduler = BlockingScheduler(standalone=True, coalesce=True)
-minutes = os.environ['INTERVAL_MINUTES']
+minutes = int(os.environ['INTERVAL_MINUTES'])
 scheduler.add_job(func=db_job, trigger=IntervalTrigger(minutes=minutes),
                   id='job1', replace_existing=False)
 scheduler.start()

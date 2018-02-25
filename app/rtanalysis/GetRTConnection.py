@@ -1,5 +1,5 @@
 import os
-from RTData import RTData
+from .RTData import RTData
 import tweepy
 
 
