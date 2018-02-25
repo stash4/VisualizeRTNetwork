@@ -1,5 +1,6 @@
-from flask import Blueprint, render_template, request, flash
+from flask import Blueprint, render_template, redirect, request, flash, url_for
 import requests
+from ..models import db, Tweet
 
 params = {
     "hide_thread": "true",
@@ -21,6 +22,28 @@ def oembed_tweet(tweet_id, params=params):
     return ret
 
 
+def tweet_id_list():
+    tweets = db.session.query(Tweet).all()
+    return [tw.id for tw in tweets]
+
+
+def rt_dict(tweet_id):
+    tweet = db.session.query(Tweet).filter_by(id=tweet_id).first()
+    if tweet is None:
+        return {}
+
+    rt_dict = {'tweetid': tweet.id, 'text': tweet.text}
+    users = tweet.users
+    links = tweet.links
+
+    rt_dict['users'] = [{'userid': u.id, 'name': u.name, 'group': u.group}
+                        for u in users]
+    rt_dict['links'] = [{'source': l.source_id, 'target': l.target_id,
+                         'distance': l.distance}
+                        for l in links]
+    return rt_dict
+
+
 status = Blueprint('status', __name__)
 
 
@@ -29,7 +52,7 @@ def status_list():
     '''
     ツイート一覧ページ
     '''
-    tweet_ids = []
+    tweet_ids = tweet_id_list()
     oembed_tweets = []
     for tw_id in tweet_ids:
         tw = oembed_tweet(tw_id)
@@ -61,5 +84,8 @@ def graph(id):
     '''
     グラフ表示ページ
     '''
-    data = {}
-    return render_template('graph.html', title='Graph', data=data)
+    if id not in tweet_id_list():
+        redirect(url_for('status_list'))
+    tweet = oembed_tweet(id)
+    data = rt_dict(id)
+    return render_template('graph.html', title='Graph', tweet=tweet, data=data)
