@@ -1,6 +1,6 @@
+import os
 from RTData import RTData
 import tweepy
-import TwitterKey
 
 
 def get_rt_data(api, sid):
@@ -16,8 +16,10 @@ def get_rt_data(api, sid):
 
 def set_api():
     # TwitterAPIの認証
-    auth = tweepy.OAuthHandler(TwitterKey.CONSUMER_KEY, TwitterKey.CONSUMER_SECRET_KEY)
-    auth.set_access_token(TwitterKey.ACCESS_TOKEN, TwitterKey.ACCESS_TOKEN_SECRET)
+    auth = tweepy.OAuthHandler(os.environ['CONSUMER_KEY'],
+                               os.environ['CONSUMER_SECRET_KEY'])
+    auth.set_access_token(os.environ['ACCESS_TOKEN'],
+                          os.environ['ACCESS_TOKEN_SECRET'])
     api = tweepy.API(auth, wait_on_rate_limit=True)  # 2つ目の引数はAPI制限に引っかかった時に待つかどうかを選ぶオプション
     return api
 
