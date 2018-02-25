@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template
 import requests
+from ..models import db, Tweet
 
 params = {
     "hide_thread": "true",
@@ -19,6 +20,11 @@ def oembed_tweet(tweet_id, params=params):
     return ret
 
 
+def tweet_id_list():
+    tweets = db.session.query(Tweet).all()
+    return [tw.id for tw in tweets]
+
+
 status = Blueprint('status', __name__)
 
 
@@ -27,7 +33,7 @@ def status_list():
     '''
     ツイート一覧ページ
     '''
-    tweet_ids = []
+    tweet_ids = tweet_id_list()
     oembed_tweets = []
     for tw_id in tweet_ids:
         oembed_tweets.append(oembed_tweet(tw_id))
