@@ -9,7 +9,7 @@ from .rtanalysis.GetAndAnalyzeRTMain import gaa_main
 def db_job():
     tweets = db.session.query(Tweet).all()
     for tw in tweets:
-        if not tw.user and not tw.links:
+        if not tw.users and not tw.links:
             gaa_main(f'https://twitter.com/user/status/{tw.id}')
 
 
