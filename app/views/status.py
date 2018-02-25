@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, request, flash, url_for
+from flask import Blueprint, render_template, redirect, request, flash
 import requests
 from ..models import db, Tweet
 
@@ -94,7 +94,7 @@ def graph(id):
     グラフ表示ページ
     '''
     if id not in tweet_id_list():
-        redirect(url_for('status_list'))
+        redirect('/status/list')
     tweet = oembed_tweet(id)
     data = rt_dict(id)
     return render_template('graph.html', title='Graph', tweet=tweet, data=data)

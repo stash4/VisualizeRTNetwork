@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
-{{ tweet }}
+{{ tweet.html|safe }}
 <div class="switch-wrapper">
   <div class="mdc-switch">
     <input type="checkbox" id="name-switch" class="mdc-switch__native-control">
