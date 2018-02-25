@@ -1,3 +1,4 @@
+import os
 from apscheduler.schedulers.background import BlockingScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 from models import Tweet
@@ -12,6 +13,7 @@ def db_job():
 
 
 scheduler = BlockingScheduler(standalone=True, coalesce=True)
-scheduler.add_job(func=db_job, trigger=IntervalTrigger(seconds=5),
+minutes = os.environ['INTERVAL_MINUTES']
+scheduler.add_job(func=db_job, trigger=IntervalTrigger(minutes=minutes),
                   id='job1', replace_existing=False)
 scheduler.start()
