@@ -41,11 +41,8 @@ class Link(db.Model):
     uuid = db.Column(db.Text, primary_key=True)
     tweet_id = db.Column(db.Integer, db.ForeignKey('tweets.id'))
 
-    source_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    target_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-
-    source = db.relationship('User', foreign_keys=[source_id])
-    target = db.relationship('User', foreign_keys=[target_id])
+    source_id = db.Column(db.Integer)
+    target_id = db.Column(db.Integer)
 
     distance = db.Column(db.Integer)
 
