@@ -167,7 +167,7 @@ def create_dict(tree, stext, sid):
     # json風に変換
     data_str = "{"
     data_str += "\"tweetid\":" + str(sid) + ","
-    data_str += "\"text\":\"" + stext + "\","
+    data_str += "\"text\":\"\"\"" + stext + "\"\"\","
     data_str += "\"users\":["
     for trid in tree:
         data_str += "{\"userid\":" + str(trid.user_id) + ", \"name\":\"" + str(trid.user_name) + "\", \"group\":" + str(trid.group) + "},"
