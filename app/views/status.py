@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for
+from flask import Blueprint, render_template, redirect, request, flash, url_for
 import requests
 from ..models import db, Tweet
 
@@ -15,8 +15,10 @@ def oembed_tweet(tweet_id, params=params):
     params['url'] = f'https://twitter.com/user/status/{tweet_id}'
     url = 'https://publish.twitter.com/oembed'
     res = requests.get(url, params=params)
-    ret = res.json()
-    ret['id'] = tweet_id
+    ret = {}
+    if res.status_code == 200:
+        ret = res.json()
+        ret['id'] = tweet_id
     return ret
 
 
@@ -53,11 +55,37 @@ def status_list():
     tweet_ids = tweet_id_list()
     oembed_tweets = []
     for tw_id in tweet_ids:
-        oembed_tweets.append(oembed_tweet(tw_id))
+        tw = oembed_tweet(tw_id)
+        if tw:
+            oembed_tweets.append(tw)
+
     return render_template(
         'status_list.html',
         title='Tweets',
         tweets=oembed_tweets)
+
+
+@status.route('/new', methods=['POST', 'GET'])
+def add_tweet():
+    '''
+    新規ツイート登録ページ
+    '''
+    if request.method == 'POST' and request.form['tweet-id']:
+        tweet_id = request.form['tweet-id']
+        oemb_tw = oembed_tweet(tweet_id)
+        db_tw = db.session.query(Tweet).filter_by(id=tweet_id).first()
+        rslt = ''
+        if not oemb_tw:
+            rslt = 'is unavailable.'
+        elif db_tw:
+            rslt = 'is already added.'
+        else:
+            db.session.add(Tweet(tweet_id, ''))
+            db.session.commit()
+            rslt = 'is added.'
+        msg = f'Tweet(id: {tweet_id}) {rslt}'
+        flash(msg)
+    return render_template('new.html', title='Add New Tweet')
 
 
 @status.route('/<id>')
