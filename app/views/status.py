@@ -72,9 +72,18 @@ def add_tweet():
     '''
     if request.method == 'POST' and request.form['tweet-id']:
         tweet_id = request.form['tweet-id']
-        tw = oembed_tweet(tweet_id)
-        msg = f'Tweet(id: {tweet_id})'
-        msg += 'is added.' if tw else ' is unavailable.'
+        oemb_tw = oembed_tweet(tweet_id)
+        db_tw = db.session.query(Tweet).filter_by(id=tweet_id).first()
+        rslt = ''
+        if not oemb_tw:
+            rslt = 'is unavailable.'
+        elif db_tw:
+            rslt = 'is already added.'
+        else:
+            db.session.add(Tweet(tweet_id, ''))
+            db.session.commit()
+            rslt = 'is added.'
+        msg = f'Tweet(id: {tweet_id}) {rslt}'
         flash(msg)
     return render_template('new.html', title='Add New Tweet')
 
