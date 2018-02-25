@@ -47,6 +47,11 @@ def rt_dict(tweet_id):
 status = Blueprint('status', __name__)
 
 
+@status.route('/')
+def status_index():
+    return redirect('/status/list')
+
+
 @status.route('/list')
 def status_list():
     '''
@@ -94,7 +99,7 @@ def graph(id):
     グラフ表示ページ
     '''
     if id not in tweet_id_list():
-        redirect('/status/list')
+        return redirect('/status/list')
     tweet = oembed_tweet(id)
     data = rt_dict(id)
     return render_template('graph.html', title='Graph', tweet=tweet, data=data)
