@@ -60,3 +60,7 @@ class Link(db.Model):
         return f'<Link uuid={self.uuid} tweet_id={self.tweet_id} '\
             f'source_id={self.source_id} target_id={self.target_id} '\
             f'distance={self.distance}>'
+
+
+def init():
+    db.create_all()
