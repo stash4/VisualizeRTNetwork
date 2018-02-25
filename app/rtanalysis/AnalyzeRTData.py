@@ -3,23 +3,44 @@ import json
 import ast
 import collections
 import datetime
+import RTDataDAO
 
 retweeter_tree = []
 node_id = set()
+stop_tree = False
 
 
 def check_api_limit(api):
-    print("API残り呼び出し回数：" + str(api.rate_limit_status("followers")["resources"]["followers"]["/followers/ids"]["remaining"]) + "回")
+    print("API残り呼び出し回数：あと：" + str(api.rate_limit_status("followers")["resources"]["followers"]["/followers/ids"]["remaining"]) + "回")
     if api.rate_limit_status("followers")["resources"]["followers"]["/followers/ids"]["remaining"] == 0:
         print("API制限に引っかかりました(◞‸◟)")
-        print("次の開始時間" + str(datetime.datetime.fromtimestamp(api.rate_limit_status("followers")["resources"]["followers"]["/followers/ids"]["reset"])))
+        print("解除時刻" + str(datetime.datetime.fromtimestamp(api.rate_limit_status("followers")["resources"]["followers"]["/followers/ids"]["reset"])))
 
 
-def get_follower_ids(api, user_id):
-    followers_ids = tweepy.Cursor(api.followers_ids, user_id=user_id).pages()  # フォロワーのidを取得。一度に5000人まで取得できるらしい。15分15回
-    followers_id_list = []
+def get_follower_ids(api, user_id, stext, sid):
+    global stop_tree
+    retweeter_follower = api.get_user(user_id).followers_count  # スクリーンネームからツイート主の情報を取得
+    call_api_count = 1
+    while True:
+        retweeter_follower = retweeter_follower - 5000
+        if retweeter_follower <= 0:
+            break
+        call_api_count += 1
+
+    if api.rate_limit_status("followers")["resources"]["followers"]["/followers/ids"]["remaining"] - call_api_count < 0:
+        # 現時点での分析結果を登録しておく
+        retweeter_tree_dict = create_dict(retweeter_tree, stext, sid)
+        RTDataDAO.register(retweeter_tree_dict)
+
+        print("API制限にかかるため約15分待機します。中断しますか？ \"はい\"->y \"いいえ\"->それ以外のキー")
+        key = input(">>")
+        if key == "y":
+            stop_tree = True
+            return []
 
     check_api_limit(api)  # API制限の回数や制限に引っかかった時の再開時間を教えてくれる
+    followers_ids = tweepy.Cursor(api.followers_ids, user_id=user_id).pages()  # フォロワーのidを取得。一度に5000人まで取得できるらしい。15分15回
+    followers_id_list = []
 
     # followers_idsはtweepy.cursor.CursorIterator型になってるのでlistに変換
     for followers_id in followers_ids:
@@ -88,16 +109,21 @@ def check_upper_node(retweeters_data_list):
     return deleted_list
 
 
-def trace_tree(api, retweeters_data_list, root_retweeters_data_list, tree):
+def trace_tree(api, retweeters_data_list, root_retweeters_data_list, tree, status_text, status_id):
     # RTリストからidを抽出
     for rdata in retweeters_data_list:
         if not (rdata.user_id in node_id):
             node_id.add(rdata.user_id)
 
     for rdata in retweeters_data_list:
+        if stop_tree:
+            break
+
         print("階層" + str(tree))
         # フォロワーのidを取得
-        followers_id_list = get_follower_ids(api, rdata.user_id)
+        followers_id_list = get_follower_ids(api, rdata.user_id, status_text, status_id)
+        if len(followers_id_list) == 0:
+            break
 
         # ユーザをフォロー&ツイートをRTしたユーザのリストを取得(RTData型)
         retweeters_data_list2 = get_retweeter_data(root_retweeters_data_list, followers_id_list)
@@ -121,7 +147,7 @@ def trace_tree(api, retweeters_data_list, root_retweeters_data_list, tree):
         retweeters_data_list4 = set_group(rdata, retweeters_data_list3)
 
         # 再帰呼び出し
-        trace_tree(api, retweeters_data_list4, root_retweeters_data_list, tree+1)
+        trace_tree(api, retweeters_data_list4, root_retweeters_data_list, tree+1, status_text, status_id)
 
 
 def add_unconnected_user(ruser, rtree, rrd_list):
@@ -137,11 +163,11 @@ def add_unconnected_user(ruser, rtree, rrd_list):
     return rtree
 
 
-def create_dict(tree, stext):
+def create_dict(tree, stext, sid):
     # json風に変換
     data_str = "{"
-    data_str += "\"tweetid\":" + str(tree[0].status_id) + ","
-    data_str += "\"text\":\"" + stext + "\","
+    data_str += "\"tweetid\":" + str(sid) + ","
+    data_str += "\"text\":\"\"\"" + stext + "\"\"\","
     data_str += "\"users\":["
     for trid in tree:
         data_str += "{\"userid\":" + str(trid.user_id) + ", \"name\":\"" + str(trid.user_name) + "\", \"group\":" + str(trid.group) + "},"
@@ -154,6 +180,17 @@ def create_dict(tree, stext):
 
     # dict型に変換してreturn
     dic = collections.OrderedDict(ast.literal_eval(data_str))
+
+    # 途中で出力する場合は一部の情報を削除
+    users_set = set()
+    for item in dic["users"]:
+        users_set.add(item["userid"])
+    for item in dic["links"]:
+        if not item["target"] in users_set:
+            item["distance"] = -2
+            item["source"] = 0
+            item["target"] = 0
+
     print(json.dumps(dic, ensure_ascii=False, indent=4, sort_keys=True, separators=(',', ': ')))  # 整形したものを表示
     return dic
 
@@ -161,8 +198,11 @@ def create_dict(tree, stext):
 def analyze_main(api, ruser, root_retweeters_data_list, status_text):
     # 再帰的に繋がりを探していく
     retweeters_data_list = [ruser]
-    trace_tree(api, retweeters_data_list, root_retweeters_data_list, 1)
-    new_retweeter_tree = add_unconnected_user(ruser, retweeter_tree, root_retweeters_data_list)
-    for rt in new_retweeter_tree:
-        print(rt.user_name)
-    return create_dict(new_retweeter_tree, status_text)
+    trace_tree(api, retweeters_data_list, root_retweeters_data_list, 1, status_text, ruser.status_id)
+    if not stop_tree:
+        new_retweeter_tree = add_unconnected_user(ruser, retweeter_tree, root_retweeters_data_list)
+        for rt in new_retweeter_tree:
+            print(rt.user_name)
+        return create_dict(new_retweeter_tree, status_text, ruser.status_id)
+    else:
+        return create_dict(retweeter_tree, status_text, ruser.status_id)
