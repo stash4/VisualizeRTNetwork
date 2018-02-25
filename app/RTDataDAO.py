@@ -50,7 +50,7 @@ class Link(db.Model):
     distance = db.Column(db.Integer)
 
     def __init__(self, tweet_id, source_id, target_id, distance):
-        self.uuid = uuid.uuid4()
+        self.uuid = str(uuid.uuid4())
         self.tweet_id = tweet_id
         self.source_id = source_id
         self.target_id = target_id
