@@ -7,7 +7,7 @@ class Tweet(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.Text)
     users = db.relationship('User', backref='tweets', lazy=True)
-    links = db.relationship('Link', backref='tweets')
+    links = db.relationship('Link', backref='tweets', lazy=True)
 
     def __init__(self, id, text):
         self.id = id
