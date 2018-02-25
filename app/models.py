@@ -14,7 +14,7 @@ class Tweet(db.Model):
         self.text = text
 
     def __repr__(self):
-        return f'<Tweet id={self.id} text={self.text}>'
+        return f'<Tweet id={self.id} text=\"{self.text}\">'
 
 
 class User(db.Model):
@@ -33,7 +33,7 @@ class User(db.Model):
 
     def __repr__(self):
         return f'<User id={self.id} tweet_id={self.tweet_id} '\
-            f'name={self.name} group={self.group}>'
+            f'name=\"{self.name}\" group={self.group}>'
 
 
 class Link(db.Model):
@@ -57,7 +57,7 @@ class Link(db.Model):
         self.distance = distance
 
     def __repr__(self):
-        return f'<Link uuid={self.uuid} tweet_id={self.tweet_id} '\
+        return f'<Link uuid=\"{self.uuid}\" tweet_id={self.tweet_id} '\
             f'source_id={self.source_id} target_id={self.target_id} '\
             f'distance={self.distance}>'
 
