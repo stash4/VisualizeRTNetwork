@@ -3,7 +3,7 @@ import json
 import ast
 import collections
 import datetime
-import RTDataDAO
+from . import RTDataDAO
 
 retweeter_tree = []
 node_id = set()
@@ -188,8 +188,8 @@ def create_dict(tree, stext, sid):
     for item in dic["links"]:
         if not item["target"] in users_set:
             item["distance"] = -2
-            item["source"] = 0
-            item["target"] = 0
+            item["source"] = ''
+            item["target"] = ''
 
     print(json.dumps(dic, ensure_ascii=False, indent=4, sort_keys=True, separators=(',', ': ')))  # 整形したものを表示
     return dic

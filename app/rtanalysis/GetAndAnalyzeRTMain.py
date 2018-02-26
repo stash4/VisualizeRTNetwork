@@ -1,15 +1,13 @@
-import AnalyzeRTData
-import GetRTConnection
-import RTDataDAO
+from . import AnalyzeRTData, GetRTConnection, RTDataDAO
 
 # https://twitter.com/TDU_webmaster/status/963293178307665920 サブ
 
 
-def gaa_main(url="https://twitter.com/jr_tduniv/status/877352450398732292"):  # 初期値はイタリアントマト
+def gaa_main(tweet_id='877352450398732292'):  # 初期値はイタリアントマト
     # API認証
     api = GetRTConnection.set_api()
     # ツイート主の情報を取得
-    root_user, status_text = GetRTConnection.get_root_user(api, url)
+    root_user, status_text = GetRTConnection.get_root_user(api, tweet_id)
     # RTしたユーザの情報を取得(100件)
     retweeter_data_list = GetRTConnection.get_rt_data(api, root_user.status_id)
 
@@ -55,4 +53,5 @@ def gaa_main(url="https://twitter.com/jr_tduniv/status/877352450398732292"):  # 
     RTDataDAO.register(retweeter_tree_dict)
 
 
-gaa_main()
+if __name__ == '__main__':
+    gaa_main()

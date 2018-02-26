@@ -11,6 +11,9 @@ flask = "*"
 requests = "*"
 flask-sqlalchemy = "*"
 apscheduler = "*"
+"psycopg2" = "*"
+gunicorn = "*"
+tweepy = "*"
 
 
 [dev-packages]

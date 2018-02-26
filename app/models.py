@@ -4,7 +4,7 @@ from app import db
 
 class Tweet(db.Model):
     __tablename__ = 'tweets'
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Text, primary_key=True)
     text = db.Column(db.Text)
     users = db.relationship('User', backref='tweets', lazy=True)
     links = db.relationship('Link', backref='tweets', lazy=True)
@@ -19,8 +19,8 @@ class Tweet(db.Model):
 
 class User(db.Model):
     __tablename__ = 'users'
-    id = db.Column(db.Integer, primary_key=True)
-    tweet_id = db.Column(db.Integer, db.ForeignKey('tweets.id'),
+    id = db.Column(db.Text, primary_key=True)
+    tweet_id = db.Column(db.Text, db.ForeignKey('tweets.id'),
                          primary_key=True)
     name = db.Column(db.Text)
     group = db.Column(db.Integer)
@@ -39,13 +39,10 @@ class User(db.Model):
 class Link(db.Model):
     __tablename__ = 'links'
     uuid = db.Column(db.Text, primary_key=True)
-    tweet_id = db.Column(db.Integer, db.ForeignKey('tweets.id'))
+    tweet_id = db.Column(db.Text, db.ForeignKey('tweets.id'))
 
-    source_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    target_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-
-    source = db.relationship('User', foreign_keys=[source_id])
-    target = db.relationship('User', foreign_keys=[target_id])
+    source_id = db.Column(db.Text)
+    target_id = db.Column(db.Text)
 
     distance = db.Column(db.Integer)
 

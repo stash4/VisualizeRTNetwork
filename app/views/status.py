@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, request, flash, url_for
+from flask import Blueprint, render_template, redirect, request, flash
 import requests
 from ..models import db, Tweet
 
@@ -28,6 +28,7 @@ def tweet_id_list():
 
 
 def rt_dict(tweet_id):
+    tweet_id = str(tweet_id)
     tweet = db.session.query(Tweet).filter_by(id=tweet_id).first()
     if tweet is None:
         return {}
@@ -45,6 +46,11 @@ def rt_dict(tweet_id):
 
 
 status = Blueprint('status', __name__)
+
+
+@status.route('/')
+def status_index():
+    return redirect('/status/list')
 
 
 @status.route('/list')
@@ -71,7 +77,7 @@ def add_tweet():
     新規ツイート登録ページ
     '''
     if request.method == 'POST' and request.form['tweet-id']:
-        tweet_id = request.form['tweet-id']
+        tweet_id = str(request.form['tweet-id'])
         oemb_tw = oembed_tweet(tweet_id)
         db_tw = db.session.query(Tweet).filter_by(id=tweet_id).first()
         rslt = ''
@@ -94,7 +100,7 @@ def graph(id):
     グラフ表示ページ
     '''
     if id not in tweet_id_list():
-        redirect(url_for('status_list'))
+        return redirect('/status/list')
     tweet = oembed_tweet(id)
     data = rt_dict(id)
     return render_template('graph.html', title='Graph', tweet=tweet, data=data)
