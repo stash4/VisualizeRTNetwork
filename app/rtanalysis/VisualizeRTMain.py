@@ -30,4 +30,5 @@ def vr_main():
     # 分析結果の表示をする処理
 
 
-vr_main()
+if __name__ == '__main__':
+    vr_main()
