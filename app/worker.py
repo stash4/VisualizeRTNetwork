@@ -13,8 +13,13 @@ def db_job():
             gaa_main(tw.id)
 
 
-scheduler = BlockingScheduler(standalone=True, coalesce=True)
-minutes = int(os.environ['INTERVAL_MINUTES'])
-scheduler.add_job(func=db_job, trigger=IntervalTrigger(minutes=minutes),
-                  id='job1', replace_existing=False)
-scheduler.start()
+def main():
+    scheduler = BlockingScheduler(standalone=True, coalesce=True)
+    minutes = int(os.environ['INTERVAL_MINUTES'])
+    scheduler.add_job(func=db_job, trigger=IntervalTrigger(minutes=minutes),
+                      id='job1', replace_existing=False)
+    scheduler.start()
+
+
+if __name__ == '__main__':
+    main()
