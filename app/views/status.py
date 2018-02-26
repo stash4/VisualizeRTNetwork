@@ -28,6 +28,7 @@ def tweet_id_list():
 
 
 def rt_dict(tweet_id):
+    tweet_id = str(tweet_id)
     tweet = db.session.query(Tweet).filter_by(id=tweet_id).first()
     if tweet is None:
         return {}
@@ -76,7 +77,7 @@ def add_tweet():
     新規ツイート登録ページ
     '''
     if request.method == 'POST' and request.form['tweet-id']:
-        tweet_id = request.form['tweet-id']
+        tweet_id = str(request.form['tweet-id'])
         oemb_tw = oembed_tweet(tweet_id)
         db_tw = db.session.query(Tweet).filter_by(id=tweet_id).first()
         rslt = ''

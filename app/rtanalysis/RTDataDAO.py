@@ -28,20 +28,22 @@ def init_link(tweet_id, source_id, target_id, distance):
 
 
 def register(rt_tree_dict):
-    tw_id = rt_tree_dict['tweetid']
+    tw_id = str(rt_tree_dict['tweetid'])
     tweet = register_tweet(tw_id, rt_tree_dict['text'])
 
     users = []
     for item in rt_tree_dict['users']:
-        user = init_user(item['userid'], tw_id, item['name'], item['group'])
+        user = init_user(str(item['userid']), tw_id,
+                         item['name'], item['group'])
         users.append(user)
 
     links = []
     for item in rt_tree_dict['links']:
-        if item['source'] == 0 and item['target'] == 0:
+        source = str(item['source'])
+        target = str(item['target'])
+        if source == '' and target == '':
             continue
-        link = init_link(tw_id, item['source'],
-                         item['target'], item['distance'])
+        link = init_link(tw_id, source, target, item['distance'])
         links.append(link)
 
     tweet.users = users
