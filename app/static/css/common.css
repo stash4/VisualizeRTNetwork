@@ -1,0 +1,14 @@
+:root {
+  --mdc-theme-primary: #2196f3;
+  --mdc-theme-primary-light: #6ec6ff;
+  --mdc-theme-primary-dark: #0069c0;
+  --mdc-theme-secondary: #26c6da;
+  --mdc-theme-secondary-light: #6ff9ff;
+  --mdc-theme-secondary-dark: #0095a8;
+}
+
+.max-width {
+  max-width: 1280px;
+  margin: auto;
+  padding: 15px 0px;
+}
