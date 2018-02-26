@@ -1,15 +1,26 @@
 import os
 from .RTData import RTData
+from ..models import db, Tweet
 import tweepy
 
 
 def get_rt_data(api, sid):
-    retweeter = api.retweets(sid, 100)  # RTしたユーザを取得(100件)
     retweeter_data = []  # RTData格納用
+    retweeter_id_set = set()
+
+    tweet = db.session.query(Tweet).filter_by(id=sid).first()
+    if tweet is not None:
+        users = tweet.users
+        for user in users:
+            retweeter_id_set.add(user.id)
+            retweeter_data.append(RTData(user.id, sid, user.name))
+
+    retweeter = api.retweets(sid, 100)  # RTしたユーザを取得(100件)
 
     for rter in retweeter:
-        retweeter_data.append(RTData(rter.user.id, sid, rter.user.name))  # 情報を抽出してRTData型として管理
-        # user_idを基に他の情報を調べる手法だと応答にかなり時間がかかるため、つながりデータは後回しにしてRTDataを生成した。
+        if rter.user.id not in retweeter_id_set:
+            retweeter_data.append(RTData(rter.user.id, sid, rter.user.name))  # 情報を抽出してRTData型として管理
+            # user_idを基に他の情報を調べる手法だと応答にかなり時間がかかるため、つながりデータは後回しにしてRTDataを生成した。
 
     return retweeter_data
 

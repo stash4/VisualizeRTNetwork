@@ -196,6 +196,12 @@ def create_dict(tree, stext, sid):
 
 
 def analyze_main(api, ruser, root_retweeters_data_list, status_text):
+    # 簡単な初期化
+    global retweeter_tree
+    global node_id
+    retweeter_tree = []
+    node_id.clear()
+
     # 再帰的に繋がりを探していく
     retweeters_data_list = [ruser]
     trace_tree(api, retweeters_data_list, root_retweeters_data_list, 1, status_text, ruser.status_id)
