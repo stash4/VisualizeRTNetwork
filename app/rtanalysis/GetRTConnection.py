@@ -24,13 +24,11 @@ def set_api():
     return api
 
 
-def get_root_user(api, url):
-    status_id = url.split("/")[5]  # ツイートID
-
-    tweeter_screen_name = url.split("/")[3]  # スクリーンネーム
-    tweeter_data = api.get_user(tweeter_screen_name)  # スクリーンネームからツイート主の情報を取得
-    tweeter_id = tweeter_data.id  # その中からuserIDを抜き出す
-    tweeter_name = tweeter_data.name  # ユーザ名も抜き出す
-    tweeter_text = api.get_status(status_id).text  # 本文を取得
+def get_root_user(api, status_id):
+    tweet = api.get_status(status_id)  # IDからツイートの情報を取得
+    tweeter = tweet.user
+    tweeter_id = tweeter.id_str  # その中からuserIDを抜き出す
+    tweeter_name = tweeter.name  # ユーザ名も抜き出す
+    tweet_text = tweet.text  # 本文を取得
     root_user = RTData(tweeter_id, status_id, tweeter_name, 0, -1)  # RTData型で管理する
-    return root_user, tweeter_text
+    return root_user, tweet_text

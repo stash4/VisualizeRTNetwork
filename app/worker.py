@@ -10,7 +10,7 @@ def db_job():
     tweets = db.session.query(Tweet).all()
     for tw in tweets:
         if not tw.users and not tw.links:
-            gaa_main(f'https://twitter.com/user/status/{tw.id}')
+            gaa_main(tw.id)
 
 
 scheduler = BlockingScheduler(standalone=True, coalesce=True)
