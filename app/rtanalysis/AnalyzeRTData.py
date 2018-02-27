@@ -1,3 +1,4 @@
+import os
 import tweepy
 import json
 import ast
@@ -7,7 +8,7 @@ from . import RTDataDAO
 
 retweeter_tree = []
 node_id = set()
-stop_tree = False
+stop_tree = os.environ['STOP_WITH_API_LIMIT']
 
 
 def check_api_limit(api):
@@ -18,7 +19,6 @@ def check_api_limit(api):
 
 
 def get_follower_ids(api, user_id, stext, sid):
-    global stop_tree
     retweeter_follower = api.get_user(user_id).followers_count  # スクリーンネームからツイート主の情報を取得
     call_api_count = 1
     while True:
@@ -32,10 +32,7 @@ def get_follower_ids(api, user_id, stext, sid):
         retweeter_tree_dict = create_dict(retweeter_tree, stext, sid)
         RTDataDAO.register(retweeter_tree_dict)
 
-        print("API制限にかかるため約15分待機します。中断しますか？ \"はい\"->y \"いいえ\"->それ以外のキー")
-        key = input(">>")
-        if key == "y":
-            stop_tree = True
+        if stop_tree == 'True':
             return []
 
     check_api_limit(api)  # API制限の回数や制限に引っかかった時の再開時間を教えてくれる
@@ -116,7 +113,7 @@ def trace_tree(api, retweeters_data_list, root_retweeters_data_list, tree, statu
             node_id.add(rdata.user_id)
 
     for rdata in retweeters_data_list:
-        if stop_tree:
+        if stop_tree == 'True':
             break
 
         print("階層" + str(tree))
@@ -205,7 +202,7 @@ def analyze_main(api, ruser, root_retweeters_data_list, status_text):
     # 再帰的に繋がりを探していく
     retweeters_data_list = [ruser]
     trace_tree(api, retweeters_data_list, root_retweeters_data_list, 1, status_text, ruser.status_id)
-    if not stop_tree:
+    if stop_tree != 'True':
         new_retweeter_tree = add_unconnected_user(ruser, retweeter_tree, root_retweeters_data_list)
         for rt in new_retweeter_tree:
             print(rt.user_name)
