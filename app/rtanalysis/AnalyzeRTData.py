@@ -37,12 +37,16 @@ def get_follower_ids(api, user_id, stext, sid):
 
     check_api_limit(api)  # API制限の回数や制限に引っかかった時の再開時間を教えてくれる
     followers_ids = tweepy.Cursor(api.followers_ids, user_id=user_id).pages()  # フォロワーのidを取得。一度に5000人まで取得できるらしい。15分15回
-    followers_id_list = []
+    followers_id_list1 = []
+    followers_id_list2 = []
 
     # followers_idsはtweepy.cursor.CursorIterator型になってるのでlistに変換
     for followers_id in followers_ids:
-        followers_id_list.append(followers_id)
-    return followers_id_list[0]
+        followers_id_list1.append(followers_id)
+    for followers_id in followers_id_list1:
+        for fid in followers_id:
+            followers_id_list2.append(fid)
+    return followers_id_list2
 
 
 def create_user_id_list(retweeters_data_list):
@@ -70,17 +74,30 @@ def get_retweeter_data(retweeters_data_list, followers_id_list):
     return retweeters_data_list2
 
 
+def search_parent_distance(user_id):
+    for rtree in retweeter_tree:
+        for rlist in rtree.connection_list:
+            if rlist[0] == user_id:
+                return rlist[1]
+    return -10
+
+
 def set_connection(ruser, retweeters_data_list, is_connect):
     if is_connect:
         for rdata in retweeters_data_list:
-            if rdata.distance != 1.5:
-                ruser.connection_list.append([rdata.user_id, rdata.distance])
+            if rdata.user_id in node_id:
+                ruser.connection_list.append([rdata.user_id, search_parent_distance(rdata.user_id)])
             else:
                 ruser.connection_list.append([rdata.user_id, ruser.distance + 1])
+                rdata.distance = ruser.distance + 1
         retweeter_tree.append(ruser)
     else:
+        new_tree = []
         for rdata in retweeters_data_list:
             ruser.connection_list.append([rdata.user_id, rdata.distance])
+            new_tree.append(rdata)
+
+    return retweeters_data_list
 
 
 def set_group(ruser, retweeter_data_list):
@@ -133,18 +150,18 @@ def trace_tree(api, retweeters_data_list, root_retweeters_data_list, tree, statu
         # つながりを設定
         print("親ノード削除前：" + str(len(retweeters_data_list2)))
         rdata.connection_list = []  # 親ノードのつながりが入ってるみたいなので一回初期化
-        rdata.distance = tree-1  # 同様の理由でにdistanceに階層の値を代入
-        set_connection(rdata, retweeters_data_list2, True)
+        rdata.distance = tree  # 同様の理由でにdistanceに階層の値を代入
+        retweeters_data_list3 = set_connection(rdata, retweeters_data_list2, True)
 
         # 親ノードをRTリストから削除
-        retweeters_data_list3 = check_upper_node(retweeters_data_list2)
-        print("親ノード削除後：" + str(len(retweeters_data_list3)))
+        retweeters_data_list4 = check_upper_node(retweeters_data_list3)
+        print("親ノード削除後：" + str(len(retweeters_data_list4)))
 
         # groupを設定
-        retweeters_data_list4 = set_group(rdata, retweeters_data_list3)
+        retweeters_data_list5 = set_group(rdata, retweeters_data_list4)
 
         # 再帰呼び出し
-        trace_tree(api, retweeters_data_list4, root_retweeters_data_list, tree+1, status_text, status_id)
+        trace_tree(api, retweeters_data_list5, root_retweeters_data_list, tree+1, status_text, status_id)
 
 
 def add_unconnected_user(ruser, rtree, rrd_list):
@@ -153,9 +170,9 @@ def add_unconnected_user(ruser, rtree, rrd_list):
         if rrd.user_id not in node_id:
             new_tree.append(rrd)
 
-    set_connection(ruser, new_tree, False)
+    new_tree2 = set_connection(ruser, new_tree, False)
 
-    for nt in new_tree:
+    for nt in new_tree2:
         rtree.append(nt)
     return rtree
 
@@ -201,7 +218,7 @@ def analyze_main(api, ruser, root_retweeters_data_list, status_text):
 
     # 再帰的に繋がりを探していく
     retweeters_data_list = [ruser]
-    trace_tree(api, retweeters_data_list, root_retweeters_data_list, 1, status_text, ruser.status_id)
+    trace_tree(api, retweeters_data_list, root_retweeters_data_list, 0, status_text, ruser.status_id)
     if stop_tree != 'True':
         new_retweeter_tree = add_unconnected_user(ruser, retweeter_tree, root_retweeters_data_list)
         for rt in new_retweeter_tree:
