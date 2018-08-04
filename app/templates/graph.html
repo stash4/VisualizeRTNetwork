@@ -1,20 +1,19 @@
-{% extends "layout.html" %}
-{% block content %}
-{{ tweet.html|safe }}
+{% extends "layout.html" %} {% block content %} {{ tweet.html|safe }}
 <div class="switch-wrapper">
-  <div class="mdc-switch">
-    <input type="checkbox" id="name-switch" class="mdc-switch__native-control">
-    <div class="mdc-switch__background">
-      <div class="mdc-switch__knob"></div>
+  <div class="mdc-switch" data-mdc-auto-init="MDCSwitch">
+    <div class="mdc-switch__track"></div>
+    <div class="mdc-switch__thumb-underlay">
+      <div class="mdc-switch__thumb">
+        <input type="checkbox" id="name-switch" class="mdc-switch__native-control" role="switch">
+      </div>
     </div>
   </div>
-  <label for="basic-switch" class="mdc-switch-label">Display name</label>
+  <label for="name-switch" class="mdc-switch-label">Display name</label>
 </div>
 <svg width="960" height="600"></svg>
 <link rel="stylesheet" href="../static/css/graph.css">
 <script>
-  var data = {{ data|safe }}
+  var data = {{ data| safe }}
 </script>
 <script src="https://d3js.org/d3.v4.min.js"></script>
-<script src="../static/js/graph.js"></script>
-{% endblock %}
+<script src="../static/js/graph.js"></script> {% endblock %}
