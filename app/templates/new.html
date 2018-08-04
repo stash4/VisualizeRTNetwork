@@ -2,13 +2,14 @@
 {% block content %}
 <form method="post" action="{{ url_for('status.add_tweet') }}">
   <div class="mdc-text-field" data-mdc-auto-init="MDCTextField">
-    <input id="tweet-id" name="tweet-id" type="number" class="mdc-text-field__input" value="">
-    <label for="tweet-id" class="mdc-text-field__label">
+    <input id="tweet-id" name="tweet-id" type="number" class="mdc-text-field__input" value=""
+    aria-controls="tweet-id-helper-text" aria-describedby="tweet-id-helper-text">
+    <label for="tweet-id" class="mdc-floating-label">
       Tweet ID
     </label>
     <div class="mdc-line-ripple"></div>
   </div>
-  <p class="mdc-text-field-helper-text" aria-hidden="true">
+  <p id="tweet-id-helper-text" class="mdc-text-field-helper-text" aria-hidden="true">
     https://twitter.com/status/*****
   </p>
   <button class="mdc-button mdc-button--raised" data-mdc-auto-init="MDCRipple">
